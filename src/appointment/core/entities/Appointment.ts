@@ -112,4 +112,13 @@ export class Appointment {
       this._client.name
     }, clientGovernmentId=${this._client.governmentId})`;
   }
+
+  toObject(): object {
+    return {
+      id: this.id,
+      date: this.date,
+      client_name: this.clientName,
+      client_government_id: this.clientGovernmentId,
+    };
+  }
 }

@@ -31,25 +31,20 @@ export class AppointmentController {
 
     const appointment = await this.findAppointmentUseCase.execute(dto);
 
-    const content = {
-      id: appointment.id,
-      date: appointment.date,
-      client_name: appointment.clientName,
-      client_government_id: appointment.clientGovernmentId,
-    };
-
-    res.json(content);
+    res.json(appointment.toObject());
   }
 
   async listAll(req: Request, res: Response): Promise<void> {
-    const appointments = await this.listAllAppointmentsUseCase.execute();
+    const page = parseInt((req.query.page as string | null) ?? "1");
+    const response = await this.listAllAppointmentsUseCase.execute(page);
 
-    const content = appointments.map((appointment) => ({
-      id: appointment.id,
-      date: appointment.date,
-      client_name: appointment.clientName,
-      client_government_id: appointment.clientGovernmentId,
-    }));
+    const content = {
+      data: response.appointments.map((appointment) => appointment.toObject()),
+      page: response.pagging.currentPage,
+      pages: response.pagging.totalPages,
+      page_size: response.pagging.pageSize,
+      total: response.pagging.totalItems,
+    };
 
     res.json(content);
   }
@@ -63,14 +58,7 @@ export class AppointmentController {
 
     const appointment = await this.makeAppointmentUseCase.execute(dto);
 
-    const content = {
-      id: appointment.id,
-      date: appointment.date,
-      client_name: appointment.clientName,
-      client_government_id: appointment.clientGovernmentId,
-    };
-
-    res.status(201).json(content);
+    res.status(201).json(appointment.toObject());
   }
 
   async cancel(req: Request, res: Response): Promise<void> {

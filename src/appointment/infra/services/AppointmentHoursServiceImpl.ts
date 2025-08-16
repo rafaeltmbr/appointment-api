@@ -14,22 +14,33 @@ const defaultOpeningHours: string[] = [
 const millisecondsInADay = 24 * 60 * 60 * 1_000;
 
 export class AppointmentHoursServiceImpl implements AppointmentHoursService {
+  private openingDays: Set<number>;
+
   constructor(
     private listDaysInAdvance: number = 3,
+    openingDays: number[] = [1, 2, 3, 4, 5],
     private openingHours: string[] = defaultOpeningHours
-  ) {}
+  ) {
+    this.openingDays = new Set(openingDays);
+  }
 
   async listNextHours(): Promise<Date[]> {
     const allHours: Date[] = [];
+    let generatedDays = 0;
 
-    for (let i = 0; i < this.listDaysInAdvance; i += 1) {
+    for (let i = 0; generatedDays < this.listDaysInAdvance; i += 1) {
       const timeOffset = millisecondsInADay * i;
-      const day = AppointmentHoursServiceImpl.getDayString(
-        new Date(Date.now() + timeOffset)
-      );
+      const date = new Date(Date.now() + timeOffset);
+      if (!this.openingDays.has(date.getDay())) continue;
+
+      const day = AppointmentHoursServiceImpl.getDayString(date);
 
       for (const hour of this.openingHours) {
-        allHours.push(new Date(`${day}T${hour}`));
+        allHours.push(new Date(`${day} ${hour}`));
+      }
+
+      if (allHours.at(-1)?.getTime() ?? 0 >= Date.now()) {
+        generatedDays += 1;
       }
     }
 

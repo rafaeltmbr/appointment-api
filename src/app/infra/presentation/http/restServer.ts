@@ -19,5 +19,7 @@ restServer.use("/appointment", appointmentRouter);
 restServer.use(errorMiddleware);
 
 restServer.listen(config.restPort, () => {
-  console.log(`Rest server listening at http://localhost:${config.restPort}`);
+  console.log(
+    `Server is running. Check out the documentation at http://localhost:${config.restPort}/api-docs/.`
+  );
 });

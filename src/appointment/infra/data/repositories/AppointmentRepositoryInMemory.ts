@@ -1,5 +1,9 @@
 import { Id } from "../../../../shared/core/entities/Id";
-import { AppointmentRepository } from "../../../core/data/repositories/AppointmentRepository";
+import { Pagging } from "../../../../shared/core/entities/Pagging";
+import {
+  AppointmentRepository,
+  ListAllAppointmentsRepositoryResults,
+} from "../../../core/data/repositories/AppointmentRepository";
 import {
   Appointment,
   Client,
@@ -9,6 +13,8 @@ import {
 
 export class AppointmentRepositoryInMemory implements AppointmentRepository {
   private appointments: Appointment[] = [];
+
+  constructor(private pageSize: number = 5) {}
 
   async findById(id: Id): Promise<Appointment | null> {
     return this.appointments.find((a) => a.id === id.value) ?? null;
@@ -37,8 +43,16 @@ export class AppointmentRepositoryInMemory implements AppointmentRepository {
     return this.appointments.filter((a) => dateStrings.has(a.date));
   }
 
-  async listAll(): Promise<Appointment[]> {
-    return [...this.appointments];
+  async listAll(page: number): Promise<ListAllAppointmentsRepositoryResults> {
+    const pagging = new Pagging(this.appointments.length, this.pageSize, page);
+
+    const slicingInterval = pagging.getItemsSlicingInterval();
+    const appointments = this.appointments.slice(
+      slicingInterval.start,
+      slicingInterval.end
+    );
+
+    return { appointments, pagging };
   }
 
   async create(date: Date, client: Client): Promise<Appointment> {

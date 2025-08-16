@@ -16,6 +16,11 @@ const appointmentController = new AppointmentController(
 
 appointmentRouter.get(
   "/",
+  celebrate({
+    [Segments.QUERY]: Joi.object().keys({
+      page: Joi.number().positive().integer(),
+    }),
+  }),
   appointmentController.listAll.bind(appointmentController)
 );
 

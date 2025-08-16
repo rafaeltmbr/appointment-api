@@ -10,15 +10,53 @@
       "get": {
         "summary": "List all appointments",
         "tags": ["Appointments"],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            },
+            "description": "Page number to retrieve"
+          }
+        ],
         "responses": {
           "200": {
-            "description": "List of all appointments",
+            "description": "List of all appointments with pagination",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Appointment"
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Appointment"
+                      }
+                    },
+                    "page": {
+                      "type": "integer",
+                      "description": "Current page number",
+                      "example": 1
+                    },
+                    "pages": {
+                      "type": "integer",
+                      "description": "Total number of pages",
+                      "example": 1
+                    },
+                    "page_size": {
+                      "type": "integer",
+                      "description": "Amount of results per page",
+                      "example": 5 
+                    },
+                    "total": {
+                      "type": "integer",
+                      "description": "Total number of items",
+                      "example": 1
+                    }
                   }
                 }
               }
