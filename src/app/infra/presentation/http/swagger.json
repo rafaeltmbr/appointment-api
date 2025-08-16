@@ -1,0 +1,251 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Appointment API",
+    "description": "API for managing appointments",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/appointment": {
+      "get": {
+        "summary": "List all appointments",
+        "tags": ["Appointments"],
+        "responses": {
+          "200": {
+            "description": "List of all appointments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Appointment"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new appointment",
+        "tags": ["Appointments"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAppointmentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Appointment created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Appointment"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/appointment/{query}": {
+      "get": {
+        "summary": "Find appointment by query",
+        "tags": ["Appointments"],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search query that can be either:\n\n* Appointment ID (e.g., 'KEJOKDOS3QO3')\n* Client Name (e.g., 'JOHN DOE')\n* Client's CPF (e.g., '123.456.789-00')",
+            "examples": {
+              "appointmentId": {
+                "value": "KEJOKDOS3QO3",
+                "summary": "Search by appointment ID"
+              },
+              "clientName": {
+                "value": "JOHN DOE",
+                "summary": "Search by client name"
+              },
+              "clientCpf": {
+                "value": "123.456.789-00",
+                "summary": "Search by client's CPF"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Appointment found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Appointment"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Appointment not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "code": "appointment_not_found",
+                  "message": "Appointment not found."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/appointment/{id}": {
+      "delete": {
+        "summary": "Cancel appointment",
+        "tags": ["Appointments"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Appointment ID",
+            "example": "KEJOKDOS3QO3"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Appointment cancelled successfully",
+            "content": {}
+          },
+          "404": {
+            "description": "Appointment not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "code": "appointment_not_found",
+                  "message": "Appointment not found."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/appointment/available-hours": {
+      "get": {
+        "summary": "List available appointment hours",
+        "tags": ["Appointments"],
+        "responses": {
+          "200": {
+            "description": "List of available hours",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Appointment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the appointment",
+            "example": "KEJOKDOS3QO3"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date and time of the appointment",
+            "example": "2025-08-15T10:00:00Z"
+          },
+          "client_name": {
+            "type": "string",
+            "description": "Name of the client",
+            "example": "JOHN DOE"
+          },
+          "client_government_id": {
+            "type": "string",
+            "description": "Client's CPF (Brazilian government ID)",
+            "example": "123.456.789-00"
+          }
+        }
+      },
+      "CreateAppointmentRequest": {
+        "type": "object",
+        "required": ["date", "client_name", "client_government_id"],
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-08-15T14:00:00Z",
+            "description": "Appointment date and time"
+          },
+          "client_name": {
+            "type": "string",
+            "example": "JOHN DOE",
+            "description": "Client's name (minimum 3 characters)"
+          },
+          "client_government_id": {
+            "type": "string",
+            "example": "123.456.789-00",
+            "description": "Client's CPF (Brazilian government ID) in format XXX.XXX.XXX-XX"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Error code identifying the type of error",
+            "example": "appointment_past_date"
+          },
+          "message": {
+            "type": "string",
+            "description": "Detailed error message",
+            "example": "Unable to make appointment, because, the given date already past."
+          }
+        }
+      }
+    }
+  }
+}
