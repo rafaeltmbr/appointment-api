@@ -72,7 +72,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateAppointmentRequest"
+                "$ref": "#/components/schemas/CreateAppointmentDto"
               }
             }
           }
@@ -113,10 +113,10 @@
             "schema": {
               "type": "string"
             },
-            "description": "Search query that can be either:\n\n* Appointment ID (e.g., 'KEJOKDOS3QO3')\n* Client Name (e.g., 'JOHN DOE')\n* Client's CPF (e.g., '123.456.789-00')",
+            "description": "Search query that can be either:\n\n* Appointment ID (e.g., 'L5HfB9W5m1K6IxolNj60')\n* Client Name (e.g., 'JOHN DOE')\n* Client's CPF (e.g., '123.456.789-00')",
             "examples": {
               "appointmentId": {
-                "value": "KEJOKDOS3QO3",
+                "value": "L5HfB9W5m1K6IxolNj60",
                 "summary": "Search by appointment ID"
               },
               "clientName": {
@@ -171,7 +171,7 @@
               "type": "string"
             },
             "description": "Appointment ID",
-            "example": "KEJOKDOS3QO3"
+            "example": "L5HfB9W5m1K6IxolNj60"
           }
         ],
         "responses": {
@@ -227,7 +227,7 @@
           "id": {
             "type": "string",
             "description": "Unique identifier for the appointment",
-            "example": "KEJOKDOS3QO3"
+            "example": "L5HfB9W5m1K6IxolNj60"
           },
           "date": {
             "type": "string",
@@ -247,7 +247,7 @@
           }
         }
       },
-      "CreateAppointmentRequest": {
+      "CreateAppointmentDto": {
         "type": "object",
         "required": ["date", "client_name", "client_government_id"],
         "properties": {

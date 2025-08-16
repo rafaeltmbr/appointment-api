@@ -11,6 +11,7 @@ import { appointmentRouter } from "../../../../appointment/infra/presentation/ht
 import { config } from "../../config";
 
 const restServer = express();
+restServer.disable("x-powered-by");
 
 restServer.use(cors());
 restServer.use(express.json());

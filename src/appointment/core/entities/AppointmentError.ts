@@ -1,3 +1,5 @@
+import { DomainErrorCode } from "../../../shared/core/entities/DomainError";
+
 export const appointmentErrorCodes = [
   "appointment_already_exists",
   "appointment_past_date",
@@ -16,7 +18,7 @@ export class AppointmentError extends Error {
     this._code = code;
   }
 
-  get code(): string {
+  get code(): AppointmentErrorCode {
     return this._code;
   }
 
